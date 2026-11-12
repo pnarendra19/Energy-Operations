@@ -108,4 +108,5 @@ Keep `.python-version` = `3.12`; if the build still picks 3.13, set the service 
 * **GenAI part:** be precise: default has no LLM; RAG yes; agent no; LLM optional and guarded.
 * **Likely questions:** what if the key-term penalty were removed (Recall@1 drops to 0.958 and the wrong-equipment answer returns)? What is calculated vs generated? How do you know it works on new data (you do not yet: no held-out set)? Where did AI tools help and how did you verify (tests, stress test, manual review of failures)?
 #   E n e r g y - O p e r a t i o n s  
+ #   E n e r g y - O p e r a t i o n s  
  
