@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Energy Operations SOP Assistant</title>
+<style>
+  :root { --g:#12372a; --g2:#e9f7ef; --bd:#e5e7eb; --ink:#172033; --mut:#5b6475; --warn:#b45309; --bad:#b91c1c; --ok:#166534; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: Inter, Arial, sans-serif; background:#f6f8fb; color:var(--ink); }
+  header { background:var(--g); color:#fff; padding:22px 32px; }
+  header h1 { margin:0 0 4px; font-size:24px; } header p { margin:0; opacity:.85; font-size:14px; }
+  main { max-width:1100px; margin:0 auto; padding:20px; display:grid; gap:16px; grid-template-columns: 2fr 1fr; }
+  @media (max-width:860px){ main{grid-template-columns:1fr;} }
+  section { background:#fff; border:1px solid var(--bd); border-radius:14px; padding:18px; }
+  h2 { font-size:15px; margin:0 0 10px; color:var(--g); }
+  .row { display:flex; gap:8px; }
+  input[type=text] { flex:1; padding:11px 12px; border:1px solid #cbd5e1; border-radius:10px; font-size:15px; }
+  button { background:var(--g); color:#fff; border:0; border-radius:10px; padding:10px 16px; font-size:14px; cursor:pointer; }
+  button.ghost { background:#fff; color:var(--g); border:1px solid var(--g); }
+  button:disabled { opacity:.5; cursor:wait; }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+  .chip { background:var(--g2); color:#14532d; border:0; border-radius:999px; padding:5px 10px; font-size:12px; cursor:pointer; }
+  .answer { font-size:16px; line-height:1.55; margin:6px 0 12px; }
+  .cite { display:inline-block; background:var(--g); color:#fff; border-radius:6px; font-size:11px; padding:0 5px; margin:0 2px; cursor:pointer; vertical-align:super; }
+  .badge { display:inline-block; padding:3px 9px; border-radius:999px; font-size:12px; font-weight:600; }
+  .b-grounded{background:#dcfce7;color:var(--ok)} .b-partially_supported{background:#fef3c7;color:var(--warn)}
+  .b-unsupported,.b-abstained{background:#fee2e2;color:var(--bad)}
+  .ev { border:1px solid var(--bd); border-radius:10px; padding:10px; margin-top:8px; font-size:13px; }
+  .ev.hl { border-color:var(--g); background:var(--g2); }
+  .meta { color:var(--mut); font-size:12px; margin-bottom:4px; }
+  .bar { height:5px; background:#e2e8f0; border-radius:4px; margin-top:6px; } .bar i { display:block; height:5px; background:var(--g); border-radius:4px; }
+  table { width:100%; border-collapse:collapse; font-size:12px; } td,th { padding:4px 6px; border-bottom:1px solid var(--bd); text-align:left; }
+  .sent-bad { color:var(--bad); } .muted { color:var(--mut); font-size:13px; }
+  .note { font-size:12px; color:var(--mut); margin-top:10px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Energy Operations SOP Assistant</h1>
+  <p>Answers come only from the indexed SOPs, with citations, retrieval evidence and hallucination checks.</p>
+</header>
+<main>
+  <div>
+    <section>
+      <h2>Ask a question</h2>
+      <div class="row"><input id="q" type="text" maxlength="500" placeholder="e.g. At what wind speed do turbines cut out?"><button id="go">Ask</button></div>
+      <div class="chips" id="examples"></div>
+    </section>
+    <section id="result" hidden style="margin-top:16px">
+      <h2>Answer <span id="verdict" class="badge"></span></h2>
+      <div class="answer" id="answer"></div>
+      <div class="meta" id="meta"></div>
+      <h2 style="margin-top:14px">Hallucination checks</h2>
+      <div id="checks"></div>
+      <h2 style="margin-top:14px">Retrieval evidence (top chunks)</h2>
+      <div id="evidence"></div>
+    </section>
+  </div>
+  <div>
+    <section>
+      <h2>Indexed SOPs</h2>
+      <div id="docs" class="muted">Loading…</div>
+      <div class="row" style="margin-top:10px"><input id="file" type="file" accept=".md,.txt"><button class="ghost" id="up">Add</button></div>
+      <div class="note" id="upmsg">Uploaded SOPs live in memory only and are lost on restart.</div>
+    </section>
+    <section style="margin-top:16px">
+      <h2>Evaluation</h2>
+      <button class="ghost" id="ev">Run evaluation set</button>
+      <div id="evres" class="muted" style="margin-top:8px"></div>
+    </section>
+  </div>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const el = (tag, text, cls) => { const e = document.createElement(tag); if (text !== undefined) e.textContent = text; if (cls) e.className = cls; return e; };
+const EXAMPLES = ["At what wind speed do turbines cut out?", "How do I handle inverter fault E-204?", "How long to wait after isolating an inverter before opening it?", "What is the CEO's annual salary?", "What is the torque for the gearbox mounting bolts?"];
+EXAMPLES.forEach(t => { const c = el("button", t, "chip"); c.onclick = () => { $("q").value = t; ask(); }; $("examples").append(c); });
+
+async function api(path, opts) { const r = await fetch(path, opts); if (!r.ok) throw new Error((await r.json().catch(()=>({}))).detail || r.statusText); return r.json(); }
+
+async function loadDocs() {
+  try {
+    const d = await api("/api/documents"); $("docs").textContent = "";
+    d.forEach(x => { const row = el("div"); row.append(el("b", x.doc_id), el("span", " " + x.title.replace(/^.*?:\s*/, "") + " (" + x.chunks + " chunks)", "muted")); row.style.marginBottom = "6px"; $("docs").append(row); });
+  } catch (e) { $("docs").textContent = "Could not load documents: " + e.message; }
+}
+
+function renderAnswer(text, citations) {
+  const box = $("answer"); box.textContent = "";
+  text.split(/(\[\d+\])/).forEach(part => {
+    const m = part.match(/^\[(\d+)\]$/);
+    if (m) { const s = el("span", m[1], "cite"); s.onclick = () => highlight(+m[1]); box.append(s); } else box.append(document.createTextNode(part));
+  });
+}
+function highlight(n) { document.querySelectorAll(".ev").forEach(e => e.classList.toggle("hl", +e.dataset.n === n)); const t = document.querySelector('.ev[data-n="' + n + '"]'); if (t) t.scrollIntoView({behavior:"smooth", block:"nearest"}); }
+
+async function ask() {
+  const q = $("q").value.trim(); if (q.length < 3) return;
+  $("go").disabled = true; $("go").textContent = "Searching…";
+  try {
+    const r = await api("/api/ask", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({question:q})});
+    $("result").hidden = false;
+    $("verdict").className = "badge b-" + r.checks.verdict; $("verdict").textContent = r.checks.verdict.replace("_", " ");
+    renderAnswer(r.answer, r.citations);
+    $("meta").textContent = "Mode: " + r.mode + (r.fallback_used ? " (LLM answer rejected by checks, extractive fallback used)" : "") + " · " + r.latency_ms + " ms · top score " + r.gate.top_score + " · question-term coverage " + r.gate.query_coverage;
+    const c = $("checks"); c.textContent = "";
+    if (r.abstained) c.append(el("div", "Abstained: " + r.gate.reason + ".", "muted"));
+    else {
+      c.append(el("div", "Groundedness " + r.checks.groundedness + " · citations valid: " + r.checks.citations_valid, "muted"));
+      const t = el("table"); const h = el("tr"); ["Sentence", "Cites", "Support", "Status"].forEach(x => h.append(el("th", x))); t.append(h);
+      r.checks.sentences.forEach(s => { const tr = el("tr"); tr.append(el("td", s.sentence.replace(/\s*\[\d+\]/g, "")), el("td", s.cited.join(", ") || "—"), el("td", s.support.toFixed(2)), el("td", s.status + (s.unsupported_numbers.length ? " (numbers: " + s.unsupported_numbers.join(", ") + ")" : ""), s.status === "supported" ? "" : "sent-bad")); t.append(tr); });
+      c.append(t);
+    }
+    const ev = $("evidence"); ev.textContent = "";
+    r.evidence.forEach(h => { const d = el("div", undefined, "ev"); d.dataset.n = h.rank;
+      d.append(el("div", "[" + h.rank + "] " + h.doc_id + " · " + h.section + " · score " + h.score.toFixed(2) + " (dense " + h.dense_score.toFixed(2) + ", sparse " + h.sparse_score.toFixed(2) + ")", "meta"), el("div", h.text));
+      const b = el("div", undefined, "bar"); const i = el("i"); i.style.width = Math.min(100, h.score * 100) + "%"; b.append(i); d.append(b); ev.append(d); });
+  } catch (e) { $("result").hidden = false; $("answer").textContent = "Error: " + e.message; $("verdict").textContent = ""; }
+  $("go").disabled = false; $("go").textContent = "Ask";
+}
+$("go").onclick = ask; $("q").addEventListener("keydown", e => { if (e.key === "Enter") ask(); });
+
+$("up").onclick = async () => {
+  const f = $("file").files[0]; if (!f) { $("upmsg").textContent = "Choose a .md or .txt file first."; return; }
+  const fd = new FormData(); fd.append("file", f);
+  try { const r = await api("/api/documents", {method:"POST", body: fd}); $("upmsg").textContent = "Added " + r.doc_id + ". Uploaded SOPs live in memory only."; loadDocs(); }
+  catch (e) { $("upmsg").textContent = "Upload failed: " + e.message; }
+};
+$("ev").onclick = async () => {
+  $("ev").disabled = true; $("evres").textContent = "Running…";
+  try { const r = await api("/api/evaluate"); const o = $("evres"); o.textContent = "";
+    const rows = [["Recall@1", r.retrieval["recall@1"]], ["MRR", r.retrieval.mrr], ["Fact recall (answers)", r.answer.fact_recall], ["Cites only correct SOP", r.answer.cites_only_correct_sop_rate], ["Abstains when out of scope", r.safety.abstention_on_out_of_scope], ["False abstain rate", r.safety.false_abstain_rate], ["Fabrication caught", r.hallucination_checker.fabricated_sentence_detected]];
+    const t = el("table"); rows.forEach(([k, v]) => { const tr = el("tr"); tr.append(el("td", k), el("td", String(v))); t.append(tr); }); o.append(t);
+    o.append(el("div", r.dataset.questions + " questions authored by the developer; see README for caveats.", "note"));
+  } catch (e) { $("evres").textContent = "Failed: " + e.message; }
+  $("ev").disabled = false;
+};
+loadDocs();
+</script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+[
+ {
+  "id": "Q01",
+  "question": "How long should I wait after isolating an inverter before opening the cabinet?",
+  "gold_doc": "SOP-SAF-001",
+  "facts": [
+   [
+    "10 minutes"
+   ]
+  ]
+ },
+ {
+  "id": "Q02",
+  "question": "Who can remove someone else's lock if that person has gone home?",
+  "gold_doc": "SOP-SAF-001",
+  "facts": [
+   [
+    "3 documented attempts"
+   ],
+   [
+    "Site Manager"
+   ]
+  ]
+ },
+ {
+  "id": "Q03",
+  "question": "What wind speed is too high to climb a turbine tower?",
+  "gold_doc": "SOP-SAF-002",
+  "facts": [
+   [
+    "18 m/s"
+   ]
+  ]
+ },
+ {
+  "id": "Q04",
+  "question": "Is lightning a reason to stop climbing, and how long do we wait before resuming?",
+  "gold_doc": "SOP-SAF-002",
+  "facts": [
+   [
+    "10 km"
+   ],
+   [
+    "30 minutes"
+   ]
+  ]
+ },
+ {
+  "id": "Q05",
+  "question": "How often does a climbing harness need a certified inspection?",
+  "gold_doc": "SOP-SAF-002",
+  "facts": [
+   [
+    "once a year"
+   ]
+  ]
+ },
+ {
+  "id": "Q06",
+  "question": "At what oil temperature does the gearbox trip?",
+  "gold_doc": "SOP-MNT-101",
+  "facts": [
+   [
+    "trips at 85 degrees"
+   ]
+  ]
+ },
+ {
+  "id": "Q07",
+  "question": "How frequently should gearbox oil samples be sent to the lab?",
+  "gold_doc": "SOP-MNT-101",
+  "facts": [
+   [
+    "6 months"
+   ]
+  ]
+ },
+ {
+  "id": "Q08",
+  "question": "What should we do if the gearbox oil shows high water content?",
+  "gold_doc": "SOP-MNT-101",
+  "facts": [
+   [
+    "500 ppm"
+   ],
+   [
+    "work order"
+   ]
+  ]
+ },
+ {
+  "id": "Q09",
+  "question": "How do I handle inverter fault E-204?",
+  "gold_doc": "SOP-MNT-102",
+  "facts": [
+   [
+    "1000 V"
+   ],
+   [
+    "1 megohm"
+   ]
+  ]
+ },
+ {
+  "id": "Q10",
+  "question": "When should solar PV modules be cleaned?",
+  "gold_doc": "SOP-MNT-102",
+  "facts": [
+   [
+    "4 percent"
+   ]
+  ]
+ },
+ {
+  "id": "Q11",
+  "question": "A Buchholz relay alarm came on. Can we re-energise the transformer?",
+  "gold_doc": "SOP-MNT-103",
+  "facts": [
+   [
+    "Do not re-energise"
+   ],
+   [
+    "DGA"
+   ]
+  ]
+ },
+ {
+  "id": "Q12",
+  "question": "What earth resistance is acceptable for the switchyard?",
+  "gold_doc": "SOP-MNT-103",
+  "facts": [
+   [
+    "below 1 ohm"
+   ]
+  ]
+ },
+ {
+  "id": "Q13",
+  "question": "What are the transformer top-oil alarm and trip temperatures?",
+  "gold_doc": "SOP-MNT-103",
+  "facts": [
+   [
+    "85 degrees"
+   ],
+   [
+    "95 degrees"
+   ]
+  ]
+ },
+ {
+  "id": "Q14",
+  "question": "Within how long must a serious S1 incident be reported to the Regional Head?",
+  "gold_doc": "SOP-OPS-201",
+  "facts": [
+   [
+    "within 1 hour"
+   ]
+  ]
+ },
+ {
+  "id": "Q15",
+  "question": "Who contacts the regulator after an incident?",
+  "gold_doc": "SOP-OPS-201",
+  "facts": [
+   [
+    "Compliance team"
+   ]
+  ]
+ },
+ {
+  "id": "Q16",
+  "question": "What cell temperature triggers the stage 2 alarm in a battery container?",
+  "gold_doc": "SOP-EMR-301",
+  "facts": [
+   [
+    "70 degrees"
+   ]
+  ]
+ },
+ {
+  "id": "Q17",
+  "question": "How far away should people muster during a BESS thermal event?",
+  "gold_doc": "SOP-EMR-301",
+  "facts": [
+   [
+    "50 m"
+   ],
+   [
+    "upwind"
+   ]
+  ]
+ },
+ {
+  "id": "Q18",
+  "question": "At what wind speed do turbines cut out automatically?",
+  "gold_doc": "SOP-OPS-202",
+  "facts": [
+   [
+    "25 m/s"
+   ]
+  ]
+ },
+ {
+  "id": "Q19",
+  "question": "What must be true before restarting turbines after a grid outage?",
+  "gold_doc": "SOP-OPS-202",
+  "facts": [
+   [
+    "5 minutes"
+   ],
+   [
+    "49.5"
+   ]
+  ]
+ },
+ {
+  "id": "Q20",
+  "question": "When do solar trackers go to stow position?",
+  "gold_doc": "SOP-OPS-202",
+  "facts": [
+   [
+    "15 m/s"
+   ]
+  ]
+ },
+ {
+  "id": "Q21",
+  "question": "What torque should I use on the inverter DC terminals?",
+  "gold_doc": "SOP-MNT-102",
+  "facts": [
+   [
+    "OEM datasheet"
+   ]
+  ]
+ },
+ {
+  "id": "Q22",
+  "question": "What happens to the locks at shift handover?",
+  "gold_doc": "SOP-SAF-001",
+  "facts": [
+   [
+    "stay in place"
+   ],
+   [
+    "own lock"
+   ]
+  ]
+ },
+ {
+  "id": "Q23",
+  "question": "How is a near miss classified and when is it logged?",
+  "gold_doc": "SOP-OPS-201",
+  "facts": [
+   [
+    "S3"
+   ],
+   [
+    "end of the shift"
+   ]
+  ]
+ },
+ {
+  "id": "Q24",
+  "question": "What protective equipment is mandatory for tower climbing?",
+  "gold_doc": "SOP-SAF-002",
+  "facts": [
+   [
+    "harness"
+   ],
+   [
+    "100%"
+   ]
+  ]
+ },
+ {
+  "id": "U01",
+  "question": "What is the CEO's annual salary?",
+  "gold_doc": null,
+  "facts": []
+ },
+ {
+  "id": "U02",
+  "question": "How do I change the engine oil in my car?",
+  "gold_doc": null,
+  "facts": []
+ },
+ {
+  "id": "U03",
+  "question": "What is the torque for the gearbox mounting bolts?",
+  "gold_doc": null,
+  "facts": []
+ },
+ {
+  "id": "U04",
+  "question": "What is the minimum safe approach distance for a 400 kV line?",
+  "gold_doc": null,
+  "facts": []
+ },
+ {
+  "id": "U05",
+  "question": "What is the procedure for pumped storage hydro turbine overhaul?",
+  "gold_doc": null,
+  "facts": []
+ },
+ {
+  "id": "U06",
+  "question": "How do I repair leading-edge erosion on a wind turbine blade?",
+  "gold_doc": null,
+  "facts": []
+ }
+]
