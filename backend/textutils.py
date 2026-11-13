@@ -1,5 +1,8 @@
 """Shared text normalisation: tokenising, light stemming, domain synonym expansion."""
-from __future__ import annotations
+
+"""This code for clean and normailzes text by converting words i"""
+
+
 
 import re
 
@@ -39,7 +42,7 @@ SYNONYMS = {
 
 
 def _raw(text: str) -> list[str]:
-    """Lowercase word tokens; possessives removed ("someone's" -> "someone"); 1-letter words dropped."""
+    """Lowercase word tokens; remove possessives and drop one-letter words."""
     text = re.sub(r"[\u2019']s\b", "", text.lower())
     return [t for t in TOKEN_RE.findall(text) if len(t) > 1 or t.isdigit()]
 
