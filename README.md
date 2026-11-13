@@ -90,3 +90,8 @@ Limitations and Future Work
 Answer quality depends on document quality and chunking strategy
 Scanned PDFs may need OCR
 Planned: user feedback on answers, multi-document filtering, evaluation dashboard
+
+
+**Output :**
+<img width="1912" height="863" alt="image" src="https://github.com/user-attachments/assets/b15029bf-ee81-4c8f-8f14-9f1560f14d2f" />
+<img width="1551" height="873" alt="image" src="https://github.com/user-attachments/assets/ea8851f9-10b0-45da-a13a-8031f2592697" />
